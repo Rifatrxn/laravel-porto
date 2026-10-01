@@ -1,0 +1,748 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* ============================================================
+   1. TEMA & VARIABEL
+   Nilai --accent, --accent-2, dan --radius diisi dari panel admin
+   lewat inline style pada <html>, jadi fallback di bawah hanya
+   dipakai kalau belum diatur.
+   ============================================================ */
+:root {
+    --accent: #6366f1;
+    --accent-2: #06b6d4;
+    --radius: 1.25rem;
+    --anim-speed: 1;
+
+    --bg: #070a13;
+    --bg-soft: #0b1020;
+    --surface: rgba(255, 255, 255, 0.035);
+    --surface-solid: #121829;
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --text: #f2f5ff;
+    --muted: #98a2c0;
+    --shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+html[data-theme='light'] {
+    --bg: #f6f7fc;
+    --bg-soft: #ffffff;
+    --surface: rgba(15, 23, 42, 0.025);
+    --surface-solid: #ffffff;
+    --border: rgba(15, 23, 42, 0.1);
+    --border-strong: rgba(15, 23, 42, 0.2);
+    --text: #0d1425;
+    --muted: #5b6684;
+    --shadow: 0 24px 50px -28px rgba(15, 23, 42, 0.35);
+}
+
+* {
+    border-color: var(--border);
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--accent) 45%, #475569);
+    border-radius: 999px;
+    border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* ============================================================
+   2. LATAR BELAKANG
+   ============================================================ */
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bg-aurora .blob {
+    position: absolute;
+    filter: blur(90px);
+    opacity: 0.55;
+    border-radius: 50%;
+    will-change: transform;
+}
+.bg-aurora .blob-1 {
+    width: 46vw;
+    height: 46vw;
+    background: var(--accent);
+    top: -12vw;
+    left: -8vw;
+    animation: drift-1 calc(22s / var(--anim-speed)) ease-in-out infinite;
+}
+.bg-aurora .blob-2 {
+    width: 38vw;
+    height: 38vw;
+    background: var(--accent-2);
+    bottom: -12vw;
+    right: -6vw;
+    animation: drift-2 calc(26s / var(--anim-speed)) ease-in-out infinite;
+}
+.bg-aurora .blob-3 {
+    width: 28vw;
+    height: 28vw;
+    background: color-mix(in srgb, var(--accent) 60%, var(--accent-2));
+    top: 42%;
+    left: 52%;
+    animation: drift-3 calc(30s / var(--anim-speed)) ease-in-out infinite;
+}
+html[data-theme='light'] .bg-aurora .blob {
+    opacity: 0.3;
+}
+
+@keyframes drift-1 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(6vw, 8vh, 0) scale(1.15); }
+}
+@keyframes drift-2 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+    50% { transform: translate3d(-7vw, -6vh, 0) scale(0.9); }
+}
+@keyframes drift-3 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+    50% { transform: translate3d(-4vw, 6vh, 0) scale(1.2); }
+}
+
+.bg-grid::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background-image:
+        linear-gradient(to right, var(--border) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 75%);
+    animation: grid-pan calc(40s / var(--anim-speed)) linear infinite;
+}
+@keyframes grid-pan {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(54px, 54px, 0); }
+}
+
+.bg-dots::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000 10%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000 10%, transparent 70%);
+}
+
+/* Cahaya mengikuti kursor */
+#cursor-glow {
+    position: fixed;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 62%);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    mix-blend-mode: screen;
+}
+html[data-theme='light'] #cursor-glow {
+    mix-blend-mode: normal;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 62%);
+}
+
+/* ============================================================
+   3. KOMPONEN DASAR
+   ============================================================ */
+.container-x {
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+}
+
+.card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.4s ease;
+}
+.card:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    box-shadow: 0 20px 50px -32px color-mix(in srgb, var(--accent) 90%, transparent);
+}
+.card-solid {
+    background: var(--surface-solid);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    color: color-mix(in srgb, var(--accent) 65%, var(--text));
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+.chip:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.text-gradient {
+    background: linear-gradient(115deg, var(--accent), var(--accent-2), var(--accent));
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: grad-slide calc(8s / var(--anim-speed)) ease infinite;
+}
+@keyframes grad-slide {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Tombol */
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, color 0.3s ease;
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+.btn:active {
+    transform: scale(0.97);
+}
+.btn-primary {
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    background-size: 200% 100%;
+    color: #fff;
+    box-shadow: 0 14px 34px -16px color-mix(in srgb, var(--accent) 110%, transparent);
+}
+.btn-primary:hover {
+    background-position: 100% 50%;
+    transform: translateY(-3px);
+    box-shadow: 0 22px 44px -18px color-mix(in srgb, var(--accent) 130%, transparent);
+}
+.btn-ghost {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+.btn-ghost:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+    color: color-mix(in srgb, var(--accent) 70%, var(--text));
+}
+.btn-sm {
+    padding: 0.45rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* Garis aksen animasi di bawah judul section */
+.section-line {
+    height: 3px;
+    width: 74px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    background-size: 200% 100%;
+    animation: grad-slide calc(4s / var(--anim-speed)) ease infinite;
+}
+
+/* Bilah progres scroll */
+#scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 60;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+
+/* Navigasi */
+.nav-link {
+    position: relative;
+    padding: 0.35rem 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link:hover,
+.nav-link.is-active {
+    color: var(--text);
+}
+.nav-link:hover::after,
+.nav-link.is-active::after {
+    width: 100%;
+}
+
+/* ============================================================
+   4. ANIMASI MASUK (REVEAL)
+   ============================================================ */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+[data-reveal='left'] { transform: translateX(-38px); }
+[data-reveal='right'] { transform: translateX(38px); }
+[data-reveal='zoom'] { transform: scale(0.9); }
+[data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Kalau animasi dimatikan dari panel admin */
+html[data-anim='off'] [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}
+html[data-anim='off'] *,
+html[data-anim='off'] *::before,
+html[data-anim='off'] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+    [data-reveal] {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Kursor mengetik */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 3px;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    animation: blink calc(1s / var(--anim-speed)) steps(2, start) infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Foto profil / avatar berputar */
+.avatar-ring {
+    position: relative;
+}
+.avatar-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--accent), var(--accent-2), transparent 65%, var(--accent));
+    animation: spin calc(9s / var(--anim-speed)) linear infinite;
+    z-index: 0;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.avatar-ring > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Elemen mengapung */
+.floaty {
+    animation: floaty calc(6s / var(--anim-speed)) ease-in-out infinite;
+}
+.floaty-slow {
+    animation: floaty calc(9s / var(--anim-speed)) ease-in-out infinite;
+}
+@keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+/* Kartu efek 3D */
+.tilt {
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.tilt-inner {
+    transform: translateZ(38px);
+}
+
+/* Garis waktu pengalaman */
+.timeline {
+    position: relative;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2), transparent);
+    opacity: 0.5;
+}
+.timeline-dot {
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.timeline-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: ping-slow calc(2.6s / var(--anim-speed)) cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ping-slow {
+    0% { transform: scale(1); opacity: 0.7; }
+    80%, 100% { transform: scale(2.1); opacity: 0; }
+}
+
+/* Bilah keahlian */
+.skill-bar {
+    height: 7px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    overflow: hidden;
+}
+.skill-bar > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Marquee teks */
+.marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee calc(28s / var(--anim-speed)) linear infinite;
+}
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+@keyframes marquee {
+    to { transform: translateX(-50%); }
+}
+
+/* Sorot kilau pada kartu */
+.shine {
+    position: relative;
+    overflow: hidden;
+}
+.shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, color-mix(in srgb, #fff 22%, transparent), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+.shine:hover::after {
+    left: 130%;
+}
+
+/* ============================================================
+   5. FORM
+   ============================================================ */
+.field {
+    width: 100%;
+    padding: 0.7rem 0.95rem;
+    border-radius: calc(var(--radius) * 0.6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    outline: none;
+}
+.field::placeholder {
+    color: color-mix(in srgb, var(--muted) 85%, transparent);
+}
+.field:focus {
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--muted);
+}
+select.field option {
+    background: var(--surface-solid);
+    color: var(--text);
+}
+input[type='color'].field {
+    padding: 0.25rem;
+    height: 42px;
+    cursor: pointer;
+}
+input[type='range'].field {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+/* ============================================================
+   6. PANEL ADMIN
+   ============================================================ */
+.admin-shell {
+    min-height: 100vh;
+}
+.admin-side {
+    background: var(--surface-solid);
+    border-right: 1px solid var(--border);
+}
+.admin-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.7rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.admin-link:hover {
+    color: var(--text);
+    background: var(--surface);
+    transform: translateX(3px);
+}
+.admin-link.is-active {
+    color: var(--text);
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.badge-on {
+    background: color-mix(in srgb, #22c55e 18%, transparent);
+    color: #4ade80;
+    border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
+}
+.badge-off {
+    background: color-mix(in srgb, #94a3b8 16%, transparent);
+    color: #94a3b8;
+    border: 1px solid color-mix(in srgb, #94a3b8 30%, transparent);
+}
+.badge-warn {
+    background: color-mix(in srgb, #f59e0b 18%, transparent);
+    color: #fbbf24;
+    border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 80;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.9rem;
+    background: var(--surface-solid);
+    border: 1px solid color-mix(in srgb, #22c55e 40%, transparent);
+    color: var(--text);
+    font-size: 0.875rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    animation: toast-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(22px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+.toast.is-hiding {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Modal */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(3, 6, 15, 0.72);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    animation: fade-in 0.28s ease;
+}
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.modal-box {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    animation: modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Grid galeri */
+.gallery-thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--border);
+}
+.gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gallery-thumb:hover img {
+    transform: scale(1.08);
+}
+
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(2, 4, 12, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fade-in 0.3s ease;
+}
+.lightbox img {
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 0.9rem;
+    box-shadow: 0 30px 90px -30px #000;
+    animation: modal-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header admin menempel */
+.admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}

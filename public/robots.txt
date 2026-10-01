@@ -1,0 +1,5 @@
+# Website publik boleh diindeks mesin pencari.
+# Catatan: jalur login & panel admin sengaja TIDAK ditulis di sini supaya
+# alamatnya tidak bocor lewat file ini.
+User-agent: *
+Allow: /
